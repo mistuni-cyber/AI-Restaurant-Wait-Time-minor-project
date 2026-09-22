@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaitWise AI | Smart Restaurant Crowd Prediction</title>
+    
+    <!-- Leaflet CSS for Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Main Glassmorphism Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+   
+</head>
+
+<body>
+
+    <!-- Ambient background blurred spheres -->
+    <div class="bg-blur sphere-1"></div>
+    <div class="bg-blur sphere-2"></div>
+    <div class="bg-blur sphere-3"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar glass-panel">
+        <div class="logo">
+            <span class="logo-icon">⏱</span>
+            <span class="logo-text">WaitWise<span class="logo-ai"> AI</span></span>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" class="active">Home</a>
+            <a href="#map">Map</a>
+            <a href="#restaurants">Restaurants</a>
+            <a href="/owner" class="nav-btn">Owner Dashboard</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge glass-card">
+                🤖 AI-POWERED RESTAURANT INTELLIGENCE
+            </div>
+
+            <h1>
+                Know the crowd.
+                <span class="gradient-text">Before you go.</span>
+            </h1>
+
+            <p class="hero-subtext">
+                WaitWise AI analyzes live crowd density, table occupancy, and historical flow to estimate exact wait times in real time.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#restaurants" class="primary-btn">
+                    Explore Restaurants →
+                </a>
+                <a href="/owner" class="secondary-btn glass-card">
+                    Restaurant Owner
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="ai-card glass-panel">
+                <div class="ai-card-top">
+                    <span>AI LIVE ANALYSIS</span>
+                    <span class="live-dot"><span class="pulse"></span> LIVE</span>
+                </div>
+
+                <div class="prediction-circle glass-card">
+                    <strong>15</strong>
+                    <span>min wait</span>
+                </div>
+
+                <div class="mini-stats">
+                    <div class="stat-box glass-card">
+                        <strong>8</strong>
+                        <span>Tables Busy</span>
+                    </div>
+                    <div class="stat-box glass-card">
+                        <strong>7</strong>
+                        <span>Tables Free</span>
+                    </div>
+                </div>
+
+                <div class="prediction-good status-badge go">
+                    🟢 Good time to visit
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features">
+        <div class="feature-card glass-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI Prediction</h3>
+            <p>Machine learning estimates waiting time from real-time crowd dynamics.</p>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon">🍽️</div>
+            <h3>Table Intelligence</h3>
+            <p>Track occupied and available tables instead of relying on simple headcounts.</p>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon">📊</div>
+            <h3>Live Crowd Data</h3>
+            <p>Restaurant owners continuously stream updated flow data to users.</p>
+        </div>
+
+        <div class="feature-card glass-card">
+            <div class="feature-icon">🔔</div>
+            <h3>Smart Guidance</h3>
+            <p>Receive actionable GO, WAIT, or BUSY recommendations instantly.</p>
+        </div>
+    </section>
+
+    <!-- MAP SECTION -->
+<section class="map-section" id="map">
+    <div class="section-heading">
+        <span class="section-label">INTERACTIVE MAP</span>
+        <h2>Explore Nearby Crowd Maps</h2>
+        <p>Search restaurants or click map pins to view real-time wait predictions.</p>
+    </div>
+    
+    <!-- Map Wrapper -->
+    <div class="map-wrapper">
+        <!-- Leaflet Map Container -->
+        <div id="restaurant-map" class="glass-panel">
+            <!-- Glass Search Bar (Top Center) -->
+            <div class="glass-map-search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="map-search-input" placeholder="Search restaurant name..." autocomplete="off">
+            </div>
+
+            <!-- Glass Zoom Controls (Top Right) -->
+            <div class="glass-zoom-controls">
+                <button id="zoom-in" class="glass-zoom-btn" title="Zoom In">+</button>
+                <button id="zoom-out" class="glass-zoom-btn" title="Zoom Out">−</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- RESTAURANTS SECTION -->
+    <section class="restaurants-section" id="restaurants">
+        <div class="section-heading">
+            <div>
+                <span class="section-label">DISCOVER</span>
+                <h2>Nearby Restaurants</h2>
+            </div>
+            <p>Real-time crowd metrics and intelligent recommendations.</p>
+        </div>
+
+        <div class="restaurant-grid">
+            {% for item in restaurants %}
+            <div class="restaurant-card glass-panel">
+                <div class="restaurant-image">
+                    <div class="restaurant-placeholder">🍽️</div>
+                    {% if item.recommendation.class == "go" %}
+                    <span class="status-pill go">🟢 GO NOW</span>
+                    {% elif item.recommendation.class == "wait" %}
+                    <span class="status-pill wait">🟡 WAIT</span>
+                    {% elif item.recommendation.class == "busy" %}
+                    <span class="status-pill busy">🔴 BUSY</span>
+                    {% endif %}
+                </div>
+
+                <div class="restaurant-content">
+                    <div class="restaurant-title">
+                        <div>
+                            <h3>{{ item.restaurant["name"] }}</h3>
+                            <p class="address">📍 {{ item.restaurant["address"] }}</p>
+                        </div>
+                        <span class="restaurant-rating glass-card">★ 4.5</span>
+                    </div>
+
+                    {% if item.wait_time is not none %}
+                    <div class="wait-display glass-card">
+                        <div>
+                            <span class="stat-label">ESTIMATED WAIT</span>
+                            <strong class="stat-val">{{ item.wait_time }} <small>min</small></strong>
+                        </div>
+                        <div class="crowd-info">
+                            <span class="stat-label">CROWD</span>
+                            <strong class="stat-val">{{ item.crowd_level }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="table-details">
+                        <div class="table-row">
+                            <span>🍽️ Total Tables</span>
+                            <strong>{{ item.restaurant["total_tables"] }}</strong>
+                        </div>
+                        <div class="table-row">
+                            <span>🔴 Occupied</span>
+                            <strong>{{ item.restaurant["occupied_tables"] }}</strong>
+                        </div>
+                        <div class="table-row available">
+                            <span>🟢 Available</span>
+                            <strong>{{ item.restaurant["available_tables"] }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="recommendation {{ item.recommendation.class }}">
+                        <span class="recommendation-icon">{{ item.recommendation.icon }}</span>
+                        <div>
+                            <strong>{{ item.recommendation.label }}</strong>
+                            <p>{{ item.recommendation.message }}</p>
+                        </div>
+                    </div>
+
+                    {% else %}
+                    <div class="no-data glass-card">
+                        <div class="no-data-icon">📊</div>
+                        <h3>Awaiting Data</h3>
+                        <p>The restaurant owner has not submitted live crowd metrics yet.</p>
+                    </div>
+                    {% endif %}
+
+                    <a href="{{ url_for('restaurant_details', restaurant_id=item.restaurant['id']) }}" class="details-btn">
+                        View Restaurant Details →
+                    </a>
+
+                    {% if item.last_updated %}
+                    <div class="last-updated">
+                        🕐 Last updated: <span class="timestamp">{{ item.last_updated }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state glass-card">
+                <h3>No restaurants available</h3>
+                <p>Add a restaurant to populate the dashboard.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS SECTION -->
+    <section class="how-section">
+        <div class="section-heading centered">
+            <span class="section-label">HOW IT WORKS</span>
+            <h2>From crowd data to smart decisions</h2>
+        </div>
+
+        <div class="steps">
+            <div class="step glass-card">
+                <div class="step-number">01</div>
+                <h3>Owner Updates</h3>
+                <p>Staff input active seating, table occupancy, and current visitor intake.</p>
+            </div>
+
+            <div class="step glass-card">
+                <div class="step-number">02</div>
+                <h3>AI Analyzes</h3>
+                <p>Machine learning models evaluate live data against historic dining speeds.</p>
+            </div>
+
+            <div class="step glass-card">
+                <div class="step-number">03</div>
+                <h3>Wait Time</h3>
+                <p>Algorithms project exact queue duration down to the minute.</p>
+            </div>
+
+            <div class="step glass-card">
+                <div class="step-number">04</div>
+                <h3>Smart Guidance</h3>
+                <p>Users receive clear GO, WAIT, or BUSY visual indicators.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel">
+        <div class="footer-logo">⏱ WaitWise AI</div>
+        <p>AI-powered restaurant crowd & wait-time recommendation system.</p>
+        <p class="copyright">© 2026 WaitWise AI • Academic Project</p>
+    </footer>
+    <script>
+    // This takes the live Python database numbers and gives them to JavaScript!
+    window.liveRestaurantData = [
+        { 
+            name: "Food Palace", 
+            lat: 21.1938, 
+            lng: 81.3509, 
+            address: "Bhilai, Chhattisgarh", 
+            wait: "{{ wait_time }} min", /* If you have AI wait time calculated */
+            status: "{% if available > 5 %}go{% elif available > 0 %}wait{% else %}busy{% endif %}", 
+            statusLabel: "({% if available %}{{ available }}{% else %}0{% endif %} Free Tables)" 
+        }
+    ];
+</script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Custom Application JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

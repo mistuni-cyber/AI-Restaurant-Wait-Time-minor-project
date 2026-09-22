@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard | WaitWise AI</title>
+    <!-- Pointing directly to static/style.css based on your folder setup -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Ambient background blurred spheres -->
+    <div class="bg-blur sphere-1"></div>
+    <div class="bg-blur sphere-2"></div>
+    <div class="bg-blur sphere-3"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar glass-panel">
+        <div class="logo">
+            <span class="logo-icon">⏱</span>
+            <span class="logo-text">WaitWise<span class="logo-ai"> AI</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/owner" class="active nav-btn">Owner Dashboard</a>
+        </div>
+    </nav>
+
+    <!-- DASHBOARD CONTENT CONTAINER -->
+    <main class="dashboard-container">
+        
+        <!-- HEADER PANEL -->
+        <div class="dashboard-header glass-panel">
+            <div>
+                <span class="section-label">RESTAUARANT MANAGEMENT</span>
+                <h1>Live Crowd Controller</h1>
+                <p>Update live seating metrics to instantly refresh customer wait predictions.</p>
+            </div>
+            <div class="status-badge go">
+                🟢 Live Server Connected
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <!-- UPDATE FORM CARD -->
+            <!-- UPDATE FORM CARD -->
+<div class="glass-panel form-card">
+    <h2>Broadcast Live Metrics</h2>
+    <p class="form-subtext">Submit real-time occupancy to feed the AI Random Forest prediction engine.</p>
+
+    <form action="/update-crowd" method="POST" class="owner-form" id="crowdForm">
+        
+        <div class="form-group">
+            <label for="restaurant_id">Select Restaurant</label>
+            <select name="restaurant_id" id="restaurant_id" class="glass-input" required>
+                <option value="" disabled selected>Choose a restaurant...</option>
+                <option value="1">Food Palace — Bhilai, Chhattisgarh</option>
+                <option value="2">Spice Bistro — Civic Center, Bhilai</option>
+                <option value="3">The Grand Diner — Nehru Nagar, Bhilai</option>
+                
+                {% if restaurants %}
+                    {% for restaurant in restaurants %}
+                        <option value="{{ restaurant['id'] if restaurant['id'] is defined else restaurant.id }}">
+                            {{ restaurant['name'] if restaurant['name'] is defined else restaurant.name }}
+                        </option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="people_inside">People Inside</label>
+                <input type="number" name="people_inside" id="people_inside" class="glass-input" placeholder="e.g. 45" required min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="occupied_tables">Occupied Tables</label>
+                <input type="number" name="occupied_tables" id="occupied_tables" class="glass-input" placeholder="e.g. 12" required min="0">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="people_entered">People Entered</label>
+                <input type="number" name="people_entered" id="people_entered" class="glass-input" placeholder="e.g. 10" required min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="people_left">People Left</label>
+                <input type="number" name="people_left" id="people_left" class="glass-input" placeholder="e.g. 2" required min="0">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="average_stay_minutes">Average Stay (Minutes)</label>
+            <input type="number" name="average_stay_minutes" id="average_stay_minutes" class="glass-input" placeholder="e.g. 45" required min="1">
+        </div>
+
+        <button type="submit" class="primary-btn submit-btn">
+            ⚡ Update Live Crowd Data
+        </button>
+    </form>
+</div>
+
+            <!-- QUICK GUIDE & TIPS CARD -->
+            <div class="glass-panel tips-card">
+                <h2>Demo Best Practices</h2>
+                <p>Use these sample inputs to showcase the AI model live during presentations:</p>
+
+                <div class="tip-box glass-card">
+                    <strong>🟢 Low Crowd Scenario</strong>
+                    <p>Set 15 Total, 4 Occupied, 2 Flow. Generates a <b>GO NOW</b> status with &lt;5 min wait time.</p>
+                </div>
+
+                <div class="tip-box glass-card">
+                    <strong>🟡 Moderate Wait Scenario</strong>
+                    <p>Set 15 Total, 9 Occupied, 5 Flow. Generates a <b>WAIT</b> recommendation (~15 min wait time).</p>
+                </div>
+
+                <div class="tip-box glass-card">
+                    <strong>🔴 Peak Busy Scenario</strong>
+                    <p>Set 15 Total, 14 Occupied, 10 Flow. Generates a <b>BUSY</b> warning with ~35+ min wait time.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel">
+        <div class="footer-logo">⏱ WaitWise AI</div>
+        <p>AI-powered restaurant crowd & wait-time recommendation system.</p>
+        <p class="copyright">© 2026 WaitWise AI • Academic Project</p>
+    </footer>
+
+</body>
+
+</html>

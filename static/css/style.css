@@ -1,0 +1,956 @@
+/* =====================================================
+   CORE STYLES & GLASSMORPHISM SETUP
+===================================================== */
+:root {
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  
+  /* Glass Variables */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-card-bg: rgba(255, 255, 255, 0.07);
+  
+  /* Text & Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent-purple: #818cf8;
+  --accent-blue: #38bdf8;
+  
+  /* Status Colors */
+  --go-color: #22c55e;
+  --go-bg: rgba(34, 197, 94, 0.15);
+  --wait-color: #eab308;
+  --wait-bg: rgba(234, 179, 8, 0.15);
+  --busy-color: #ef4444;
+  --busy-bg: rgba(239, 68, 68, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background Ambient Spheres */
+.bg-blur {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: -1;
+  pointer-events: none;
+}
+.sphere-1 {
+  width: 350px;
+  height: 350px;
+  background: rgba(99, 102, 241, 0.25);
+  top: -50px;
+  left: -50px;
+}
+.sphere-2 {
+  width: 450px;
+  height: 450px;
+  background: rgba(56, 189, 248, 0.2);
+  top: 40%;
+  right: -100px;
+}
+.sphere-3 {
+  width: 400px;
+  height: 400px;
+  background: rgba(168, 85, 247, 0.18);
+  bottom: 0;
+  left: 20%;
+}
+
+/* Glass Utility Classes */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+}
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+.navbar {
+  position: sticky;
+  top: 20px;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
+  border-radius: 20px;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.logo-ai {
+  color: var(--accent-blue);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text-primary);
+}
+
+.nav-btn {
+  padding: 0.5rem 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+/* =====================================================
+   HERO SECTION
+===================================================== */
+.hero {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 80px auto;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--accent-blue);
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  -webkit-background-clip: text; /* Safari & older WebKit browsers */
+  background-clip: text;         /* Standard property for modern browsers */
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+
+.hero-subtext {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+  max-width: 500px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6);
+}
+
+.secondary-btn {
+  padding: 14px 28px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* HERO VISUAL (AI CARD) */
+.ai-card {
+  padding: 30px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ai-card-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+}
+
+.live-dot {
+  color: var(--go-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prediction-circle {
+  width: 140px;
+  height: 140px;
+  margin: 10px auto;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.prediction-circle strong {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.prediction-circle span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.mini-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-box {
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-box strong {
+  display: block;
+  font-size: 1.25rem;
+}
+
+.stat-box span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--go-bg);
+  color: var(--go-color);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* =====================================================
+   FEATURES SECTION
+===================================================== */
+.features {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 100px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  padding: 24px;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.feature-card h3 {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.feature-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* =====================================================
+   RESTAURANTS SECTION
+===================================================== */
+.restaurants-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 100px auto;
+}
+
+.section-heading {
+  margin-bottom: 40px;
+}
+
+.section-heading.centered {
+  text-align: center;
+}
+
+.section-label {
+  color: var(--accent-blue);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.section-heading h2 {
+  font-size: 2.2rem;
+  margin-top: 4px;
+}
+
+.section-heading p {
+  color: var(--text-secondary);
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.restaurant-card {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.restaurant-image {
+  height: 140px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.restaurant-placeholder {
+  font-size: 3rem;
+  opacity: 0.5;
+}
+
+.status-pill {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+}
+
+.status-pill.go { background: var(--go-bg); color: var(--go-color); border: 1px solid var(--go-color); }
+.status-pill.wait { background: var(--wait-bg); color: var(--wait-color); border: 1px solid var(--wait-color); }
+.status-pill.busy { background: var(--busy-bg); color: var(--busy-color); border: 1px solid var(--busy-color); }
+
+.restaurant-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.restaurant-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.restaurant-title h3 {
+  font-size: 1.25rem;
+}
+
+.address {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.restaurant-rating {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.wait-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.stat-val {
+  font-size: 1.4rem;
+}
+
+.table-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 8px 0;
+}
+
+.table-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+}
+
+.table-row.available strong {
+  color: var(--go-color);
+}
+
+.recommendation {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.recommendation.go { background: var(--go-bg); border: 1px solid rgba(34, 197, 94, 0.3); }
+.recommendation.wait { background: var(--wait-bg); border: 1px solid rgba(234, 179, 8, 0.3); }
+.recommendation.busy { background: var(--busy-bg); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+.details-btn {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.details-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.no-data {
+  padding: 20px;
+  text-align: center;
+}
+
+.last-updated {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* =====================================================
+   HOW IT WORKS SECTION
+===================================================== */
+.how-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 100px auto;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.step {
+  padding: 24px;
+  position: relative;
+}
+
+.step-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent-purple);
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+
+.step h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.step p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+footer {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.footer-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--text-primary), var(--accent-blue));
+  -webkit-background-clip: text; /* Safari & older WebKit browsers */
+  background-clip: text;         /* Standard property */
+  -webkit-text-fill-color: transparent;
+}
+
+.copyright {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+===================================================== */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .hero-subtext {
+    margin: 0 auto 30px auto;
+  }
+  
+  .hero-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* =====================================================
+   RESTAURANT DETAILS DASHBOARD STYLES
+===================================================== */
+.details-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 80px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.details-header {
+  padding: 30px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.back-link {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+}
+
+.back-link:hover {
+  opacity: 0.8;
+}
+
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.restaurant-badge {
+  font-size: 2.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.details-header h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.metric-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.metric-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.details-split {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 30px;
+}
+
+.panel-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.panel-box {
+  padding: 30px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recommendation-banner {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.no-data-banner {
+  padding: 30px;
+  text-align: center;
+}
+
+.no-data-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.occupancy-progress {
+  height: 12px;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-indigo));
+  border-radius: 10px;
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.info-item span {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+  .details-split {
+    grid-template-columns: 1fr;
+  }
+}
+/* =====================================================
+   GOOGLE MAPS STYLE POPUP OVERLAYS
+===================================================== */
+#restaurant-map {
+  width: 100%;
+  height: 450px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(12px);
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px !important;
+  padding: 8px;
+}
+
+.leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.95) !important;
+}
+
+.map-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.map-popup h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #38bdf8;
+}
+
+.map-popup p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.map-popup-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.map-popup-badge.go { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.4); }
+.map-popup-badge.wait { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.4); }
+.map-popup-badge.busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+/* =====================================================
+   GLASSMORPHISM OVERLAY CONTROLS (IN-MAP SEARCH & ZOOM)
+===================================================== */
+.map-wrapper {
+  width: 100%;
+}
+
+#restaurant-map {
+  position: relative !important; /* CRITICAL: Keeps elements inside map */
+  width: 100%;
+  height: 450px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* =====================================================
+   GLASSMORPHISM FLOATING SEARCH BAR
+===================================================== */
+.glass-map-search-box {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 90%;
+  max-width: 380px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  /* True Frosted Glassmorphism Styles */
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30px;
+  padding: 10px 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Hover & Focus Glow Effect */
+.glass-map-search-box:focus-within,
+.glass-map-search-box:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: var(--accent-blue);
+  box-shadow: 0 8px 32px 0 rgba(56, 189, 248, 0.25),
+              inset 0 0 0 1px rgba(56, 189, 248, 0.4);
+}
+
+.glass-map-search-box .search-icon {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.glass-map-search-box input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.glass-map-search-box input::placeholder {
+  color: rgba(248, 250, 252, 0.7);
+}
+
+.glass-map-search-box input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.glass-map-search-box input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Glass Zoom Buttons (Floating Top Right inside Map) */
+.glass-zoom-controls {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.glass-zoom-btn {
+  width: 40px;
+  height: 40px;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.glass-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}

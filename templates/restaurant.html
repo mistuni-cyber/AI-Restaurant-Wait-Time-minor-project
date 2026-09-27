@@ -49,12 +49,13 @@
         </div>
 
         <!-- STATS GRID -->
+        <!-- STATS GRID -->
         <div class="metrics-grid">
             <div class="metric-card glass-card">
                 <span class="metric-icon">⏱</span>
                 <span class="stat-label">AI ESTIMATED WAIT</span>
                 <strong class="stat-value">
-                    {% if wait_time is not none %}{{ wait_time }} <small>min</small>{% else %}—{% endif %}
+                    {% if wait_time is not none %}{{ wait_time | round(1) }} <small>min</small>{% else %}—{% endif %}
                 </strong>
             </div>
 
@@ -62,7 +63,7 @@
                 <span class="metric-icon">👥</span>
                 <span class="stat-label">OCCUPIED TABLES</span>
                 <strong class="stat-value">
-                    {% if restaurant.occupied_tables is defined %}{{ restaurant.occupied_tables }}{% else %}—{% endif %}
+                    {% if latest %}{{ latest.occupied_tables }}{% else %}—{% endif %}
                 </strong>
             </div>
 
@@ -76,11 +77,28 @@
                 <span class="metric-icon">🟢</span>
                 <span class="stat-label">AVAILABLE TABLES</span>
                 <strong class="stat-value">
-                    {% if restaurant.available_tables is defined %}{{ restaurant.available_tables }}{% else %}—{% endif %}
+                    {% if latest %}{{ restaurant.total_tables - latest.occupied_tables }}{% else %}—{% endif %}
                 </strong>
             </div>
         </div>
 
+        <!-- ... (Keep your DUAL COLUMN LAYOUT and AI RECOMMENDATION ENGINE parts exactly the same) ... -->
+
+                <!-- REPLACE THIS PANEL: -->
+                <div class="glass-panel panel-box">
+                    <span class="section-label">OCCUPANCY STATUS</span>
+                    <h3>Live Capacity Meter</h3>
+                    <div class="occupancy-progress glass-card">
+                        <div class="progress-bar" data-width="{% if latest %}{{ (latest.occupied_tables / restaurant.total_tables * 100) | round }}{% else %}0{% endif %}"></div>   
+                    </div>
+                    <p class="progress-text">
+                        {% if latest %}
+                        {{ latest.occupied_tables }} out of {{ restaurant.total_tables }} tables currently occupied.
+                        {% else %}
+                        No occupancy data logged yet.
+                        {% endif %}
+                    </p>
+                </div>
         <!-- DUAL COLUMN LAYOUT -->
         <div class="details-split">
             

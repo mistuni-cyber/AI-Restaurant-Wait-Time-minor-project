@@ -284,23 +284,22 @@
         <p class="copyright">© 2026 WaitWise AI • Academic Project</p>
     </footer>
     <script>
-    // This takes the live Python database numbers and gives them to JavaScript!
+    // Link Python Backend to JavaScript Map
     window.liveRestaurantData = [
-        { 
-            name: "Food Palace", 
-            lat: 21.1938, 
-            lng: 81.3509, 
-            address: "Bhilai, Chhattisgarh", 
-            wait: "{{ wait_time }} min", /* If you have AI wait time calculated */
-            status: "{% if available > 5 %}go{% elif available > 0 %}wait{% else %}busy{% endif %}", 
-            statusLabel: "({% if available %}{{ available }}{% else %}0{% endif %} Free Tables)" 
-        }
+        {% for item in restaurants %}
+        {
+            name: "{{ item.restaurant.name }}",
+            lat: {% if loop.index == 1 %}21.1938{% elif loop.index == 2 %}21.2050{% else %}21.1800{% endif %},
+            lng: {% if loop.index == 1 %}81.3509{% elif loop.index == 2 %}81.3700{% else %}81.3300{% endif %},
+            address: "Bhilai, Chhattisgarh",
+            wait: "{% if item.wait_time != None %}{{ item.wait_time | round(1) }} min{% else %}Pending...{% endif %}",
+            status: "{% if item.restaurant.available_tables and item.restaurant.available_tables > 5 %}go{% elif item.restaurant.available_tables and item.restaurant.available_tables > 0 %}wait{% else %}busy{% endif %}",
+            statusLabel: "{{ item.recommendation.icon }} {{ item.recommendation.label }} ({% if item.restaurant.available_tables != None %}{{ item.restaurant.available_tables }}{% else %}0{% endif %} Free Tables)"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
     ];
-</script>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Custom Application JS -->
+    </script>
+<!-- ADD THIS MISSING LINE HERE: -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 

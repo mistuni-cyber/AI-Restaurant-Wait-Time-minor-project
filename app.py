@@ -22,32 +22,85 @@ create_tables()
 # =========================================================
 # HOME PAGE
 # =========================================================
+# =========================================================
+# HOME PAGE
+# =========================================================
 @app.route("/")
 def index():
     connection = get_db_connection()
     
-    # Get the latest data for Food Palace (ID 1)
-    latest_update = connection.execute("""
-        SELECT * FROM crowd_updates 
-        WHERE restaurant_id = 1 
-        ORDER BY timestamp DESC LIMIT 1
-    """).fetchone()
+    # 1. Get all restaurants
+    restaurants = connection.execute("SELECT * FROM restaurants ORDER BY name").fetchall()
     
-    restaurant = connection.execute("SELECT * FROM restaurants WHERE id = 1").fetchone()
+    restaurant_data = []
+
+    for restaurant in restaurants:
+        # 2. Get the latest crowd update for this specific restaurant
+        latest = connection.execute("""
+            SELECT * FROM crowd_updates 
+            WHERE restaurant_id = ? 
+            ORDER BY timestamp DESC LIMIT 1
+        """, (restaurant["id"],)).fetchone()
+
+        wait_time = None
+        crowd_level = "No Data"
+        available_tables = 0
+        last_updated = None
+        
+        recommendation = {
+            "label": "DATA NEEDED",
+            "class": "unknown",
+            "icon": "⚪",
+            "message": "Waiting for the restaurant to update its crowd information."
+        }
+
+        # 3. If we have live data, calculate the AI predictions!
+        if latest:
+            last_updated = latest["timestamp"]
+            
+            # Calculate available tables
+            available_tables = restaurant["total_tables"] - latest["occupied_tables"]
+            if available_tables < 0: available_tables = 0
+
+            # Run AI Models
+            wait_time = predict_wait_time(
+                latest["people_inside"],
+                restaurant["total_tables"],
+                latest["occupied_tables"],
+                latest["people_entered"],
+                latest["people_left"],
+                restaurant["average_stay_minutes"]
+            )
+
+            crowd_level = get_crowd_level(
+                latest["people_inside"],
+                restaurant["total_tables"],
+                latest["occupied_tables"]
+            )
+
+            recommendation = get_recommendation(
+                wait_time,
+                available_tables,
+                latest["people_inside"],
+                restaurant["total_tables"]
+            )
+
+        # 4. Package it all up for index.html
+        restaurant_data.append({
+            "restaurant": dict(restaurant),
+            "wait_time": wait_time,
+            "crowd_level": crowd_level,
+            "recommendation": recommendation,
+            "available_tables": available_tables,
+            "last_updated": last_updated
+        })
+
     connection.close()
 
-    # Calculate live availability
-    available_tables = 0
-    if latest_update and restaurant:
-        available_tables = restaurant["total_tables"] - latest_update["occupied_tables"]
-        if available_tables < 0: available_tables = 0
-
-    # (You would normally call your AI model here. For now, let's just pass the data)
-    # We will pass this data to index.html
-    return render_template("index.html", 
-                           latest=latest_update, 
-                           restaurant=restaurant,
-                           available=available_tables)
+    return render_template(
+        "index.html",
+        restaurants=restaurant_data
+    )
 
 # =========================================================
 # RESTAURANT DETAILS
@@ -190,6 +243,7 @@ def owner_dashboard():
     )
 
 
+
 # =========================================================
 # UPDATE RESTAURANT CROWD
 # =========================================================
@@ -207,14 +261,14 @@ def update_crowd():
         flash("Please enter valid numbers.", "error")
         return redirect(url_for("owner_dashboard"))
 
-    # 2. Basic validation (no negative numbers)
+    # 2. Basic validation
     if people_inside < 0 or people_entered < 0 or people_left < 0 or occupied_tables < 0 or average_stay <= 0:
         flash("Values cannot be negative or zero.", "error")
         return redirect(url_for("owner_dashboard"))
 
     connection = get_db_connection()
 
-    # 3. Verify restaurant exists and check total tables
+    # 3. Verify restaurant exists
     restaurant = connection.execute(
         "SELECT total_tables FROM restaurants WHERE id = ?", 
         (restaurant_id,)
@@ -232,13 +286,21 @@ def update_crowd():
 
     # 4. Save to Database
     try:
+        # Save the live crowd data to crowd_updates (Removed average_stay_minutes from here!)
         connection.execute("""
             INSERT INTO crowd_updates 
-            (restaurant_id, people_inside, people_entered, people_left, occupied_tables, average_stay_minutes)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (restaurant_id, people_inside, people_entered, people_left, occupied_tables, average_stay))
+            (restaurant_id, people_inside, people_entered, people_left, occupied_tables)
+            VALUES (?, ?, ?, ?, ?)
+        """, (restaurant_id, people_inside, people_entered, people_left, occupied_tables))
         
-        connection.commit() # This line actually saves it to the database!
+        # Update the average stay time in the restaurants table
+        connection.execute("""
+            UPDATE restaurants 
+            SET average_stay_minutes = ? 
+            WHERE id = ?
+        """, (average_stay, restaurant_id))
+        
+        connection.commit() 
         flash("✓ Restaurant status updated successfully!", "success")
     except Exception as e:
         flash(f"Database error: {str(e)}", "error")

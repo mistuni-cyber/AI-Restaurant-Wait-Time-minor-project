@@ -39,10 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         
             // Use the live data from the database, or fallback to default if it fails to load
-        const locations = window.liveRestaurantData || [
-            { name: "Food Palace", lat: 21.1938, lng: 81.3509, address: "Bhilai, Chhattisgarh", wait: "Pending...", status: "wait", statusLabel: "Loading data..." }
-        
-        ];
+        const locations = window.liveRestaurantData || [];
 
         const markerMap = {};
 

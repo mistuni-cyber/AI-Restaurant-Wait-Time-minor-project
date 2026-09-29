@@ -35,6 +35,9 @@ def index():
     restaurant_data = []
 
     for restaurant in restaurants:
+        # Convert SQLite row to a regular dictionary so we can inject new data into it
+        rest_dict = dict(restaurant)
+        
         # 2. Get the latest crowd update for this specific restaurant
         latest = connection.execute("""
             SELECT * FROM crowd_updates 
@@ -44,7 +47,6 @@ def index():
 
         wait_time = None
         crowd_level = "No Data"
-        available_tables = 0
         last_updated = None
         
         recommendation = {
@@ -54,27 +56,35 @@ def index():
             "message": "Waiting for the restaurant to update its crowd information."
         }
 
-        # 3. If we have live data, calculate the AI predictions!
+        # Set safe defaults if no data exists yet
+        rest_dict["occupied_tables"] = None
+        rest_dict["available_tables"] = None
+
+        # 3. If we have live data, calculate everything
         if latest:
             last_updated = latest["timestamp"]
             
-            # Calculate available tables
-            available_tables = restaurant["total_tables"] - latest["occupied_tables"]
+            # INJECT THE LIVE NUMBERS DIRECTLY INTO THE RESTAURANT DICTIONARY
+            # (This is exactly what index.html and the Map are looking for!)
+            rest_dict["occupied_tables"] = latest["occupied_tables"]
+            
+            available_tables = rest_dict["total_tables"] - latest["occupied_tables"]
             if available_tables < 0: available_tables = 0
+            rest_dict["available_tables"] = available_tables
 
             # Run AI Models
             wait_time = predict_wait_time(
                 latest["people_inside"],
-                restaurant["total_tables"],
+                rest_dict["total_tables"],
                 latest["occupied_tables"],
                 latest["people_entered"],
                 latest["people_left"],
-                restaurant["average_stay_minutes"]
+                rest_dict["average_stay_minutes"]
             )
 
             crowd_level = get_crowd_level(
                 latest["people_inside"],
-                restaurant["total_tables"],
+                rest_dict["total_tables"],
                 latest["occupied_tables"]
             )
 
@@ -82,16 +92,15 @@ def index():
                 wait_time,
                 available_tables,
                 latest["people_inside"],
-                restaurant["total_tables"]
+                rest_dict["total_tables"]
             )
 
-        # 4. Package it all up for index.html
+        # 4. Package it up for the frontend
         restaurant_data.append({
-            "restaurant": dict(restaurant),
+            "restaurant": rest_dict,
             "wait_time": wait_time,
             "crowd_level": crowd_level,
             "recommendation": recommendation,
-            "available_tables": available_tables,
             "last_updated": last_updated
         })
 
